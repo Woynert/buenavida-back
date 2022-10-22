@@ -1,0 +1,27 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f1306bce8f352
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f130675017a36
+modified: 1665880722077
+created: 1665880722077
+url: "{{ base_url }}/favorite"
+name: Remove favorite item
+description: ""
+method: DELETE
+body: {}
+parameters:
+  - name: itemid
+    disabled: true
+    value: string
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+authentication: {}
+metaSortKey: -1665880722077
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

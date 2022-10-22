@@ -1,0 +1,29 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13068eb368b2
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f13068bfb4e1a
+modified: 1666479648637
+created: 1665880722086
+url: "{{ base_url }}/cart"
+name: delete item from cart
+description: ""
+method: DELETE
+body: {}
+parameters:
+  - name: itemid
+    disabled: true
+    value: string
+    id: pair_4a2641f82f504249be6407cbfc2b4055
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+    id: pair_fd6b8d65fcb2431e87dd5991837be4d0
+authentication: {}
+metaSortKey: -1665880722086
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

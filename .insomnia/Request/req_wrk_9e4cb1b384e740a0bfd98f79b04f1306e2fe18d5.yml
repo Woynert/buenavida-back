@@ -1,0 +1,33 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f1306e2fe18d5
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f13068bfb4e1a
+modified: 1666479649474
+created: 1665880722084
+url: "{{ base_url }}/cart"
+name: add / update cart item
+description: ""
+method: POST
+body: {}
+parameters:
+  - name: itemid
+    disabled: true
+    value: string
+    id: pair_656de931ab64474c84d57720cab55a44
+  - name: quantity
+    disabled: true
+    value: "0"
+    id: pair_e244a45d6c8f4de8b223fd964d4dc28d
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+    id: pair_8a2874f4a4754b29a377b4d1c0de7bdc
+authentication: {}
+metaSortKey: -1665880722084
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

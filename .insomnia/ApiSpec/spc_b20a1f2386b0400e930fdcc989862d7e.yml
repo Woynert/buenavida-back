@@ -1,0 +1,326 @@
+_id: spc_b20a1f2386b0400e930fdcc989862d7e
+type: ApiSpec
+parentId: wrk_9e4cb1b384e740a0bfd98f79b04f1306
+modified: 1666480325817
+created: 1665880172077
+fileName: buenavida-api
+contents: |+
+  openapi: 3.0.3
+  info:
+    description: this
+    title: Buena vida API1
+    version: 0.1.0
+
+  tags:
+    - name: session
+    - name: cart
+    - name: store
+    - name: favorite
+
+  servers:
+      - url: "http://127.0.0.1:8070"
+
+  paths:
+
+    # ========================================================
+    # session ================================================
+    
+    /session/login:
+      post:
+        tags:
+          - session
+        summary: login
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: mario@mushrom.kingdom
+                  password:
+                    type: string
+                    example: supersecretpassword
+        security: []
+        responses:
+          '200':
+            description: >
+              Successfully authenticated.
+              The session ID is returned in a cookie named `JSESSIONID`.
+              You need to include this cookie in subsequent requests.
+            headers: 
+              Set-Cookie:
+                schema: 
+                  type: string
+                  example: JSESSIONID=abcde12345; Path=/; HttpOnly
+                  
+    /session/signin:
+      post:
+        tags:
+          - session
+        summary: create a new account
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstname:
+                    type: string
+                    example: Mario
+                  lastname:
+                    type: string
+                    example: Bros
+                  email:
+                    type: string
+                    example: mario@mushrom.kingdom
+                  password:
+                    type: string
+                    example: supersecretpassword
+                  passwordconfirm:
+                    type: string
+                    example: supersecretpassword
+        security: []
+        responses:
+          '200':
+            description: Successfully registered
+
+    /session/logout:
+      delete:
+        tags:
+          - session
+        summary: Log out
+        responses:
+          '200':
+            description: Successfully logged out
+
+    # ========================================================
+    # cart ===================================================
+    
+    /cart:
+      get:
+        tags:
+          - cart
+        summary: get cart items
+        responses:
+          '200':
+            description: success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Product'
+      delete:
+        tags:
+          - cart
+        summary: delete item from cart
+        parameters:
+          - in: query
+            name: itemid
+            schema:
+              type: string
+            description: The item id
+        responses:
+          '200':
+            description: deleted succesfully
+            
+      post:
+        tags:
+          - cart
+        summary: add / update cart item
+        parameters:
+          - in: query
+            name: itemid
+            schema:
+              type: string
+            description: The item id
+          - in: query
+            name: quantity
+            schema:
+              type: integer
+            description: How many items
+        responses:
+          '200':
+            description: updated succesfully
+     
+    # ========================================================
+    # store ==================================================
+     
+    /store:
+      get:
+        tags:
+          - store
+        summary: get filtered items in groups
+        parameters:
+          - in: query
+            name: searchterm
+            schema:
+              type: string
+            description: Term to search
+          - in: query
+            name: pageid
+            schema:
+              type: integer
+            description: The page index to check
+          - in: query
+            name: minprice
+            schema:
+              type: integer
+            description: Minimun price
+          - in: query
+            name: maxprice
+            schema:
+              type: integer
+            description: Maximum price
+        responses:
+          '200':
+            description: success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    pages:
+                      type: integer
+                      example: 7
+                    items:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Product'
+                    
+    # ========================================================
+    # favorite ===============================================
+                        
+    /favorite:
+      get:
+        tags:
+          - favorite
+        summary: get user favorite items
+        responses:
+          '200':
+            description: success
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Product'
+      put:
+        tags:
+          - favorite
+        summary: add favorite item
+        parameters:
+          - in: query
+            name: itemid
+            schema:
+              type: string
+            description: Item to add
+        responses:
+          '200':
+            description: success
+            
+      delete:
+        tags:
+          - favorite
+        summary: remove favorite item
+        parameters:
+          - in: query
+            name: itemid
+            schema:
+              type: string
+            description: Item to remove
+        responses:
+          '200':
+            description: success
+            
+  components:
+    schemas:
+      Product:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "00021"
+          title:
+            type: string
+            example: "Crema de piel"
+          units:
+            type: string
+            example: "30 UNDs"
+          price:
+            type: number
+            example: 1.210
+          discount:
+            type: integer
+            example: 10
+          priceperunit:
+            type: number
+            example: 0.25
+          description:
+            type: string
+            example: "Exfoliante de piel natural, wow!"
+            
+    securitySchemes:
+      # arbitrary name for the security scheme
+      # will be used in the "security" key later
+      cookieAuth: 
+        type: apiKey
+        in: cookie
+        name: JSESSIONID  # cookie name
+
+  # Apply cookie auth globally to all operations
+  security:
+    - cookieAuth: []
+
+
+
+
+  ######### carrito
+  #/cart/
+    #GET
+    #add cart items
+
+  #/cart/{itemid}{quantity}
+    #DELETE
+    #delete item form cart
+
+    #POST
+    #add item to cart / update quiantity
+    
+  ######### TODO #########
+  #/cart/checkout
+    #POST
+    #do payment
+    
+  ######### store 
+  #/store/{search-term}{pageid}{minprice}{maxprice}
+    #GET
+    #get filtered items from page number
+
+  ######### favorite
+  #/favorite/{itemid}
+    #GET
+    #get all favorites
+
+    #PUT
+    #add favorite item
+
+    #DELETE
+    #remove item from favorites
+
+  ######### session
+  #/session/login
+    #POST
+    #login
+
+  #/session/signin
+    #POST
+    #signin
+
+  #/session/logout
+    #POST
+    #logout
+
+contentType: yaml

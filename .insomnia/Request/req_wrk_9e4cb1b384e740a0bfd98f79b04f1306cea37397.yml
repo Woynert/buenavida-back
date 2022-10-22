@@ -1,0 +1,41 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f1306cea37397
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f13063a21295d
+modified: 1666479650322
+created: 1665880722083
+url: "{{ base_url }}/store"
+name: get filtered items in groups
+description: ""
+method: GET
+body: {}
+parameters:
+  - name: searchterm
+    disabled: true
+    value: string
+    id: pair_ed4cccf18540442ca66806f6d1538779
+  - name: minprice
+    disabled: true
+    value: "0"
+    id: pair_3e25f149a6f2431685f56ee0962185a9
+  - name: maxprice
+    disabled: true
+    value: "0"
+    id: pair_f8a3a24e586c4d4c99b598c113c30c0e
+  - name: pageid
+    disabled: true
+    value: "0"
+    id: pair_8331bb8984104bd1a723325f452bd871
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+    id: pair_b7f152c6ce4c44089207db5e1b8ccc5f
+authentication: {}
+metaSortKey: -1665880722083
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

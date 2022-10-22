@@ -1,0 +1,21 @@
+_id: req_c48b1f41d20446dab2c2d5204c87d154
+type: Request
+parentId: wrk_9e4cb1b384e740a0bfd98f79b04f1306
+modified: 1666455672140
+created: 1666455260779
+url: "{{ base_url }}/session/refresh"
+name: cookietest
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1666455260779
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

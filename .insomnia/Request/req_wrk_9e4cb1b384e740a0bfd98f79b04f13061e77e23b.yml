@@ -1,0 +1,27 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13061e77e23b
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f130675017a36
+modified: 1665880722079
+created: 1665880722079
+url: "{{ base_url }}/favorite"
+name: Add favorite item
+description: ""
+method: PUT
+body: {}
+parameters:
+  - name: itemid
+    disabled: true
+    value: string
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+authentication: {}
+metaSortKey: -1665880722079
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

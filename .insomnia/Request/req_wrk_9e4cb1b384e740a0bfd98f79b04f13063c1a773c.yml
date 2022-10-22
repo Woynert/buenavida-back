@@ -1,0 +1,25 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13063c1a773c
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f1306fcbdc4c2
+modified: 1666479668272
+created: 1665880722071
+url: "{{ base_url }}/session/logout"
+name: Log out
+description: ""
+method: DELETE
+body: {}
+parameters: []
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+    id: pair_f41080e749b94e4baee44d2475fdffb9
+authentication: {}
+metaSortKey: -1665880722071
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

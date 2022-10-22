@@ -1,0 +1,24 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13069bf31030
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f130675017a36
+modified: 1665880722081
+created: 1665880722081
+url: "{{ base_url }}/favorite"
+name: Get user favorite items
+description: ""
+method: GET
+body: {}
+parameters: []
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+authentication: {}
+metaSortKey: -1665880722081
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

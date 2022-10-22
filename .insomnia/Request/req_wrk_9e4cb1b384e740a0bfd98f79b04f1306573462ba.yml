@@ -1,0 +1,33 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f1306573462ba
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f1306fcbdc4c2
+modified: 1666479653915
+created: 1665880722074
+url: "{{ base_url }}/session/signin"
+name: Create a new account
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "firstname": "Mario",
+      "lastname": "Bros",
+      "email": "mario@mushrom.kingdom",
+      "password": "supersecretpassword",
+      "passwordconfirm": "supersecretpassword"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_b72bb9ebca144b7d815d69a5f464e725
+authentication: {}
+metaSortKey: -1665880722074
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

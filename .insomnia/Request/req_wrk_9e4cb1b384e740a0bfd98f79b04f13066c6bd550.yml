@@ -1,0 +1,30 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13066c6bd550
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f1306fcbdc4c2
+modified: 1666479652899
+created: 1665880722076
+url: "{{ base_url }}/session/login"
+name: login
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "email": "mario@mushrom.kingdom",
+      "password": "superpass"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_788424aa568f41ccba24e4e6b7843f2b
+authentication: {}
+metaSortKey: -1665880722076
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

@@ -1,0 +1,25 @@
+_id: req_wrk_9e4cb1b384e740a0bfd98f79b04f130672b3ad6a
+type: Request
+parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f13068bfb4e1a
+modified: 1666479647011
+created: 1665880722088
+url: "{{ base_url }}/cart"
+name: get cart items
+description: ""
+method: GET
+body: {}
+parameters: []
+headers:
+  - name: Cookie
+    disabled: false
+    value: JSESSIONID={{ jsessionid }}
+    id: pair_57c67558aaa44506add84bb2bef29ebb
+authentication: {}
+metaSortKey: -1665880722088
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
