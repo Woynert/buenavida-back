@@ -1,0 +1,16 @@
+[
+	{
+		"firstname": "Mario",
+		"Lastname": "Bros",
+		"Email": "mario@pipe.co",
+		"Password": "123456",
+		"Favorites": []
+	},
+	{
+		"firstname": "Luigi",
+		"Lastname": "Bros",
+		"Email": "luigi@pipe.co",
+		"Password": "123456",
+		"Favorites": []
+	}
+]

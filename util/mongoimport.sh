@@ -1,19 +1,17 @@
 #!/bin/sh
 
-#MONGOHOST="localhost"
-
-# start daemon
-#mongod &
-
-## import file
-#sleep 15
-
 mongoimport \
 	--db 'buenavida' \
 	--collection 'products' \
-	--file '/data/products.json' \
+	--file '/data/json/products.json' \
 	--jsonArray \
-	--uri "mongodb://root:example@$MONGOHOST:27017" \
+	--uri "mongodb://$MONGO_USER:$MONGO_PASS@$MONGO_HOST:27017" \
 	--authenticationDatabase 'admin'
 
-#sleep infinity
+mongoimport \
+	--db 'buenavida' \
+	--collection 'users' \
+	--file '/data/json/users.json' \
+	--jsonArray \
+	--uri "mongodb://$MONGO_USER:$MONGO_PASS@$MONGO_HOST:27017" \
+	--authenticationDatabase 'admin'

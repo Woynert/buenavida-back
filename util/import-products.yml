@@ -18,10 +18,12 @@ services:
     image: mongo:4.4.17
     restart: "no"
     volumes:
-      - ../data/json/products.json:/data/products.json
+      - ../data/json:/data/json
       - ../util/mongoimport.sh:/opt/mongoimport.sh
     environment:
-      MONGOHOST: mongo
+      MONGO_HOST: mongo
+      MONGO_USER: root
+      MONGO_PASS: example
     depends_on:
       - "mongo"
     command:
