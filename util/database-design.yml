@@ -1,0 +1,36 @@
+
+# Product
+
+Product:
+  Id: string
+  Title: string
+  Units: string
+  Price: float64
+  Discount: int
+  PricePerUnit: float64
+  Description: string
+      
+User:
+  Firstname:
+    type: "string"
+  Lastname: string
+  Email: string
+  Password: string
+  Favorites: 
+    [
+      itemId: ObjectId
+  ]
+
+
+
+
+type Product struct {
+	Id				string	`json:"id"`
+	Title			string	`json:"title"`
+	Units			string	`json:"units"`
+	Price			float64	`json:"price"`
+	Discount		int		`json:"discount"`
+	PricePerUnit	float64	`json:"priceperunit"`
+	Description		string	`json:"description"`
+
+}
