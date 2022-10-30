@@ -4,14 +4,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-
 type Product struct {
 	Id				primitive.ObjectID `json:"_id"          bson:"_id"`   
 	Title			string             `json:"title"        bson:"title"`
 	Units			string             `json:"units"        bson:"units"`
 	Price			float64            `json:"price"        bson:"price"`
 	Discount		int	               `json:"discount"     bson:"discount"`
-	PricePerUnit	float64            `json:"priceperunit" bson:"priceperunit"`
+	PricePerUnit	string             `json:"priceperunit" bson:"priceperunit"`
 	Description		string             `json:"description"  bson:"description"`
 }
 
