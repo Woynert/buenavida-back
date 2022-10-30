@@ -21,6 +21,7 @@ func main() {
 	// favorite
 
 	// store
+	router.GET ("/store", CheckMongoConnection(), controller.StoreFilterItems)
 
 	router.Run(":8070")
 
