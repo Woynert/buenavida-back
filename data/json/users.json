@@ -1,16 +1,16 @@
 [
 	{
-		"firstname": "Mario",
-		"Lastname": "Bros",
-		"Email": "mario@pipe.co",
-		"Password": "123456",
-		"Favorites": []
+		"firstname": "mario",
+		"lastname": "bros",
+		"email": "mario@pipe.co",
+		"password": "$2a$08$8J0mVPO9JrSDhm0qSeO93ebYiNKZjpi0fhRH80ZepY.2FwlbfFss2",
+		"favorites": []
 	},
 	{
-		"firstname": "Luigi",
-		"Lastname": "Bros",
-		"Email": "luigi@pipe.co",
-		"Password": "123456",
-		"Favorites": []
+		"firstname": "luigi",
+		"lastname": "bros",
+		"email": "luigi@pipe.co",
+		"password": "$2a$08$8J0mVPO9JrSDhm0qSeO93ebYiNKZjpi0fhRH80ZepY.2FwlbfFss2",
+		"favorites": []
 	}
 ]
