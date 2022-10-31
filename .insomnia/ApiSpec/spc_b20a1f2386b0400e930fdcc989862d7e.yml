@@ -1,20 +1,19 @@
 _id: spc_b20a1f2386b0400e930fdcc989862d7e
 type: ApiSpec
 parentId: wrk_9e4cb1b384e740a0bfd98f79b04f1306
-modified: 1666480325817
+modified: 1667235215875
 created: 1665880172077
 fileName: buenavida-api
 contents: |+
   openapi: 3.0.3
   info:
-    description: this
-    title: Buena vida API1
+    title: Buenavida API
     version: 0.1.0
 
   tags:
     - name: session
-    - name: cart
     - name: store
+    - name: cart
     - name: favorite
 
   servers:
@@ -29,7 +28,7 @@ contents: |+
       post:
         tags:
           - session
-        summary: login
+        summary: Login
         requestBody:
           content:
             application/json:
@@ -59,7 +58,7 @@ contents: |+
       post:
         tags:
           - session
-        summary: create a new account
+        summary: Create a new account
         requestBody:
           content:
             application/json:
@@ -94,57 +93,7 @@ contents: |+
         responses:
           '200':
             description: Successfully logged out
-
-    # ========================================================
-    # cart ===================================================
-    
-    /cart:
-      get:
-        tags:
-          - cart
-        summary: get cart items
-        responses:
-          '200':
-            description: success
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Product'
-      delete:
-        tags:
-          - cart
-        summary: delete item from cart
-        parameters:
-          - in: query
-            name: itemid
-            schema:
-              type: string
-            description: The item id
-        responses:
-          '200':
-            description: deleted succesfully
             
-      post:
-        tags:
-          - cart
-        summary: add / update cart item
-        parameters:
-          - in: query
-            name: itemid
-            schema:
-              type: string
-            description: The item id
-          - in: query
-            name: quantity
-            schema:
-              type: integer
-            description: How many items
-        responses:
-          '200':
-            description: updated succesfully
-     
     # ========================================================
     # store ==================================================
      
@@ -152,7 +101,7 @@ contents: |+
       get:
         tags:
           - store
-        summary: get filtered items in groups
+        summary: Get filtered items in groups
         parameters:
           - in: query
             name: searchterm
@@ -174,6 +123,7 @@ contents: |+
             schema:
               type: integer
             description: Maximum price
+        security: []
         responses:
           '200':
             description: success
@@ -189,6 +139,32 @@ contents: |+
                       type: array
                       items:
                         $ref: '#/components/schemas/Product'
+                        
+    # ========================================================
+    # cart ===================================================
+    
+    /cart/pay:
+        post:
+          tags:
+            - cart
+          summary: Pay for items
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      itemid:
+                        type: string
+                        example: "635ff5e57dc24673181abdab"
+                      quantity:
+                        type: number
+                        example: 3
+          responses:
+            '200':
+              description: Payment succesfully executed.
                     
     # ========================================================
     # favorite ===============================================
@@ -197,7 +173,7 @@ contents: |+
       get:
         tags:
           - favorite
-        summary: get user favorite items
+        summary: Get user favorite items
         responses:
           '200':
             description: success
@@ -210,7 +186,7 @@ contents: |+
       put:
         tags:
           - favorite
-        summary: add favorite item
+        summary: Add favorite item
         parameters:
           - in: query
             name: itemid
@@ -224,7 +200,7 @@ contents: |+
       delete:
         tags:
           - favorite
-        summary: remove favorite item
+        summary: Remove favorite item
         parameters:
           - in: query
             name: itemid

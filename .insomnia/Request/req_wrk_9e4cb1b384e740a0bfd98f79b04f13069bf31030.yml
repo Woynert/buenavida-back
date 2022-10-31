@@ -1,7 +1,7 @@
 _id: req_wrk_9e4cb1b384e740a0bfd98f79b04f13069bf31030
 type: Request
 parentId: fld_wrk_9e4cb1b384e740a0bfd98f79b04f130675017a36
-modified: 1665880722081
+modified: 1666644461562
 created: 1665880722081
 url: "{{ base_url }}/favorite"
 name: Get user favorite items
@@ -13,6 +13,7 @@ headers:
   - name: Cookie
     disabled: false
     value: JSESSIONID={{ jsessionid }}
+    id: pair_479ce9145310480e911f99ea19e79c1e
 authentication: {}
 metaSortKey: -1665880722081
 isPrivate: false
