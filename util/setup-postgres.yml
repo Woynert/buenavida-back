@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  postgres:
+    image: postgres:15.0
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER:     buenavida-user
+      POSTGRES_DB:       buenavida
+      PGDATA:            /var/lib/postgresql/data
+    volumes:
+      - ../data/postgres/:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  postgres-script:
+    image: postgres:15.0
+    restart: unless-stopped
+    volumes:
+      - ../src/sql:/opt/sql
+      - ../util/setup-postgres.sh:/opt/setup-postgres.sh
+    environment:
+      POSTGRES_HOST:     postgres
+      POSTGRES_DB:       buenavida
+      POSTGRES_USER:     buenavida-user
+      POSTGRES_PASSWORD: password
+    depends_on:
+      - "postgres"
+    command: sh /opt/setup-postgres.sh
+

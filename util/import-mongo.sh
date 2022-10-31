@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# import products.json
+
 mongoimport \
 	--db 'buenavida' \
 	--collection 'products' \
@@ -7,6 +9,8 @@ mongoimport \
 	--jsonArray \
 	--uri "mongodb://$MONGO_USER:$MONGO_PASS@$MONGO_HOST:27017" \
 	--authenticationDatabase 'admin'
+
+# import users.json
 
 mongoimport \
 	--db 'buenavida' \

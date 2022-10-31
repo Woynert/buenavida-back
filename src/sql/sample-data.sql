@@ -1,6 +1,4 @@
 
-USE buenavida;
-
 -- sample data
 
 DO $$
