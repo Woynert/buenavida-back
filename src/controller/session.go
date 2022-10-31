@@ -2,13 +2,21 @@ package controller
 
 import (
 	token "woynert/buenavida-api/token"
+	db "woynert/buenavida-api/database"
 
-	"fmt"
+	"context"
     "net/http"
     "github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const HOST string = "localhost";
+
+// hash passwords with bcrypt
+// https://dev.to/nwby/how-to-hash-a-password-in-go-4jae
 
 func Signin(c *gin.Context) {
     c.IndentedJSON(http.StatusOK, "")
@@ -19,7 +27,10 @@ type LoginForm struct {
 	Password string `json:"password"`
 }
 
+
 func Login(c *gin.Context) {
+
+	var err error
 	var form LoginForm
 
 	// See more at https://github.com/gin-gonic/gin/blob/master/binding/binding.go#L48
@@ -28,27 +39,54 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(form.Email)
-	fmt.Println(form.Password)
+	// find user with email
 
-	if form.Email == "mario@mushrom.kingdom" && form.Password == "superpass" {
+	var mc *mongo.Client = db.GetClient()
+	var user db.User
+	coll := mc.Database("buenavida").Collection("users")
 
-		var tokeninfo token.TokenInfo = token.TokenInfo{
-			UserID: "0001",
+	err = coll.FindOne(
+		context.TODO(),
+		bson.D{{"email", form.Email}},
+	).Decode(&user)
+
+	if err != nil {
+		// ErrNoDocuments: the filter did not match any documents
+		if err == mongo.ErrNoDocuments {
+			c.AbortWithStatusJSON(http.StatusUnauthorized,
+			gin.H{"message": "Wrong user/password"})
+			return
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"message": "Internal server error"})
+			return
 		}
-		accessToken, refreshToken, err := token.Create(tokeninfo)
-
-		fmt.Println("tokens ", err)
-		fmt.Println(accessToken)
-		fmt.Println(refreshToken)
-
-		c.SetCookie("refreshToken", refreshToken, 10, "/session/refresh", HOST, false, true)
-		c.SetCookie("accessToken", accessToken, 10, "/", HOST, false, true)
-
-		c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully logged in"})
-	} else {
-		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Wrong user/password"})
 	}
+
+	// check password
+
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(form.Password)); err != nil{
+		c.AbortWithStatusJSON(http.StatusUnauthorized,
+		gin.H{"message": "Wrong user/password"})
+		return
+	}
+
+	// generate tokens
+
+	var tokeninfo token.TokenInfo = token.TokenInfo{
+		UserID: "0001",
+	}
+
+	accessToken, refreshToken, err := token.Create(tokeninfo)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Could not generate token"})
+		return
+	}
+
+	c.SetCookie("refreshToken", refreshToken, 10, "/session/refresh", HOST, false, true)
+	c.SetCookie("accessToken", accessToken, 10, "/", HOST, false, true)
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully logged in"})
 }
 
 
