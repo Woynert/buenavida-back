@@ -1,6 +1,4 @@
 
-USE buenavida;
-
 -- drop
 
 DROP PROCEDURE IF EXISTS sales_new;

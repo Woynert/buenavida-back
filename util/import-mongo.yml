@@ -19,11 +19,11 @@ services:
     restart: "no"
     volumes:
       - ../data/json:/data/json
-      - ../util/mongoimport.sh:/opt/mongoimport.sh
+      - ../util/import-mongo.sh:/opt/import-mongo.sh
     environment:
       MONGO_HOST: mongo
       MONGO_USER: root
       MONGO_PASS: example
     depends_on:
       - "mongo"
-    command: sh /opt/mongoimport.sh
+    command: sh /opt/import-mongo.sh
