@@ -26,5 +26,4 @@ services:
       MONGO_PASS: example
     depends_on:
       - "mongo"
-    command:
-      - /opt/mongoimport.sh
+    command: sh /opt/mongoimport.sh
