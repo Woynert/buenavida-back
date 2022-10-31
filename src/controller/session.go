@@ -6,6 +6,7 @@ import (
 
 	"context"
     "net/http"
+	//"encoding/json"
     "github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 
@@ -18,8 +19,71 @@ const HOST string = "localhost";
 // hash passwords with bcrypt
 // https://dev.to/nwby/how-to-hash-a-password-in-go-4jae
 
+type SigninForm struct {
+	Firstname string               `json:"firstname"`
+	Lastname  string               `json:"lastname"`
+	Email     string               `json:"email"`
+	Password  string               `json:"password"`
+}
+
 func Signin(c *gin.Context) {
-    c.IndentedJSON(http.StatusOK, "")
+	var err error
+	var form SigninForm
+
+	// See more at https://github.com/gin-gonic/gin/blob/master/binding/binding.go#L48
+	if err := c.BindJSON(&form); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		return
+	}
+
+	if form.Firstname == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Name cannot be empty"})
+		return
+	}
+
+	if form.Lastname == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Lastname cannot be empty"})
+		return
+	}
+
+	if form.Email == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Email cannot be empty"})
+		return
+	}
+
+	if form.Password == "" {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Password cannot be empty"})
+		return
+	}
+
+	if err != nil {
+		// ErrNoDocuments: the filter did not match any documents
+		if err == mongo.ErrNoDocuments {
+			c.AbortWithStatusJSON(http.StatusUnauthorized,
+			gin.H{"message": form.Firstname})
+			return
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"message": "Internal server error"})
+			return
+		}
+	}
+
+	data := map[string]interface{}{
+		"firstname":form.Firstname,
+		"lastname":form.Lastname,
+		"email":form.Email,
+		"password":form.Password,
+		"favorites":[]string{},
+	}
+
+	var mc *mongo.Client = db.GetClient()
+	coll := mc.Database("buenavida").Collection("users")
+
+	result, err := coll.InsertOne(context.TODO(),data)
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": result.InsertedID})
+	
 }
 
 type LoginForm struct {
