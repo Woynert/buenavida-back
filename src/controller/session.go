@@ -55,11 +55,7 @@ func Signin(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 			gin.H{"message": "User already exists"})
 			return
-		} else {
-			c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"message": "Internal server error"})
-			return
-		}
+		} 
 	}
 
 	if form.Firstname == "" {
