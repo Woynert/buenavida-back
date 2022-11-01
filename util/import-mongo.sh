@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# import products.json
+
 mongoimport \
 	--db 'buenavida' \
 	--collection 'products' \
@@ -8,7 +10,7 @@ mongoimport \
 	--uri "mongodb://$MONGO_USER:$MONGO_PASS@$MONGO_HOST:27017" \
 	--authenticationDatabase 'admin'
 
-# clone products for search
+# clone products.json for search
 
 mongoimport \
 	--db 'buenavida' \
@@ -17,6 +19,8 @@ mongoimport \
 	--jsonArray \
 	--uri "mongodb://$MONGO_USER:$MONGO_PASS@$MONGO_HOST:27017" \
 	--authenticationDatabase 'admin'
+
+# import users.json
 
 mongoimport \
 	--db 'buenavida' \
