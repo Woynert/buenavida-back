@@ -6,7 +6,9 @@ import (
 
 	"context"
     "net/http"
-	//"encoding/json"
+	"net/mail"
+	"fmt"
+	"unicode"
     "github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 
@@ -36,6 +38,30 @@ func Signin(c *gin.Context) {
 		return
 	}
 
+	// find user with email
+
+	var mc *mongo.Client = db.GetClient()
+	var user db.User
+	coll := mc.Database("buenavida").Collection("users")
+
+	err = coll.FindOne(
+		context.TODO(),
+		bson.D{{"email", form.Email}},
+	).Decode(&user)
+
+
+	if !(err != nil) {
+		if !(err == mongo.ErrNoDocuments) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized,
+			gin.H{"message": "User already exists"})
+			return
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"message": "Internal server error"})
+			return
+		}
+	}
+
 	if form.Firstname == "" {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Name cannot be empty"})
 		return
@@ -46,9 +72,14 @@ func Signin(c *gin.Context) {
 		return
 	}
 
+	_, err = mail.ParseAddress(form.Email)
+
 	if form.Email == "" {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Email cannot be empty"})
 		return
+	} else if err != nil{
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Email is invalid"})
+        return
 	}
 
 	if form.Password == "" {
@@ -56,29 +87,31 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		// ErrNoDocuments: the filter did not match any documents
-		if err == mongo.ErrNoDocuments {
-			c.AbortWithStatusJSON(http.StatusUnauthorized,
-			gin.H{"message": form.Firstname})
-			return
-		} else {
-			c.AbortWithStatusJSON(http.StatusInternalServerError,
-			gin.H{"message": "Internal server error"})
-			return
+	if len(form.Password) >= 8{
+		message := validPassword(form.Password)
+		if message != nil{
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": message.Error()})
+            return
 		}
+	}else{
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Password is too short"})
+        return
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(form.Password), 8)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,gin.H{"message": "Internal server error"})
+		return
 	}
 
 	data := map[string]interface{}{
 		"firstname":form.Firstname,
 		"lastname":form.Lastname,
 		"email":form.Email,
-		"password":form.Password,
+		"password":string(hashed),
 		"favorites":[]string{},
 	}
-
-	var mc *mongo.Client = db.GetClient()
-	coll := mc.Database("buenavida").Collection("users")
 
 	result, err := coll.InsertOne(context.TODO(),data)
 
@@ -167,3 +200,20 @@ func Logout (c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, "Succesfully logout")
 }
 
+func validPassword(s string) error {
+	next:
+			for name, classes := range map[string][]*unicode.RangeTable{
+					"upper case": {unicode.Upper, unicode.Title},
+					"lower case": {unicode.Lower},
+					"numeric":    {unicode.Number, unicode.Digit},
+					"special":    {unicode.Space, unicode.Symbol, unicode.Punct, unicode.Mark},
+			} {
+					for _, r := range s {
+							if unicode.IsOneOf(classes, r) {
+									continue next
+							}
+					}
+					return fmt.Errorf("password must have at least one %s character", name)
+			}
+			return nil
+}
