@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var mongoClient mongo.Client;
@@ -50,3 +51,36 @@ func CloseConnection () error {
 	return nil
 }
 
+func CheckConnection () error {
+	
+	var mc *mongo.Client = GetClient()
+
+	// check connection
+	if err := mc.Ping(context.TODO(), readpref.Primary()); err != nil {
+
+		// disconnect
+		err = CloseConnection()
+		if (err != nil){
+			return err
+		}
+
+		// reconnect
+		var err error
+		err = StartConnection()
+
+		if (err != nil){
+			return err
+		}
+
+		// check again
+		// https://pkg.go.dev/go.mongodb.org/mongo-driver/mongo?utm_source=godoc#Client.Connect
+		// The Client.Ping method can be used to verify
+		// that the connection was created successfully.
+
+		if err = mc.Ping(context.TODO(), readpref.Primary()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

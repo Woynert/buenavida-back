@@ -7,11 +7,8 @@ import (
 	"fmt"
 	"context"
     "net/http"
-    "github.com/gin-gonic/gin"
 
-	// mongo
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+    "github.com/gin-gonic/gin"
 )
 
 func CheckAccessToken() gin.HandlerFunc {
@@ -72,39 +69,12 @@ func CheckRefreshToken() gin.HandlerFunc {
 func CheckMongoConnection() gin.HandlerFunc {
 	return func(c *gin.Context){
 
-		var mc *mongo.Client = db.GetClient()
-
-		// check connection
-		if err := mc.Ping(context.TODO(), readpref.Primary()); err != nil {
-
-			// disconnect
-			err = db.CloseConnection ()
-			if (err != nil){
-				c.AbortWithStatusJSON(http.StatusInternalServerError,
-				gin.H{"message": "Internal server error"})
-				return
-			}
-
-			// reconnect
-			var err error
-			err = db.StartConnection()
-
-			if (err != nil){
-				c.AbortWithStatusJSON(http.StatusInternalServerError,
-				gin.H{"message": "Internal server error"})
-				return
-			}
-
-			// check again
-			// https://pkg.go.dev/go.mongodb.org/mongo-driver/mongo?utm_source=godoc#Client.Connect
-			// The Client.Ping method can be used to verify
-			// that the connection was created successfully.
-
-			if err = mc.Ping(context.TODO(), readpref.Primary()); err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError,
-				gin.H{"message": "Internal server error"})
-				return
-			}
+		err := db.CheckConnection()
+		if (err != nil){
+			fmt.Println(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"message": "Internal server error"})
+			return
 		}
 
 	}

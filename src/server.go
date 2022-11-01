@@ -2,11 +2,22 @@ package main
 
 import (
 	controller "woynert/buenavida-api/controller"
+	db "woynert/buenavida-api/database"
+	"log"
 
     "github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	// mongodb search index
+	if err := db.CheckConnection(); err != nil {
+		log.Fatal(err)
+	}
+	db.PopulateNgrams()
+	db.CreateIndexNgram()
+
+	// router
 	router := gin.Default();
 
 	// session
@@ -21,6 +32,7 @@ func main() {
 	// favorite
 
 	// store
+	router.GET ("/store", CheckMongoConnection(), controller.StoreFilterItems)
 
 	router.Run(":8070")
 
