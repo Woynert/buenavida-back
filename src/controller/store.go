@@ -24,54 +24,60 @@ func StoreFilterItems (c *gin.Context) {
 	searchTerm := c.DefaultQuery("searchterm", "")
 
 	pageId, err := strconv.Atoi(c.DefaultQuery("pageid", "0"))
-	if err != nil{
-		pageId = 0
-	}
+	if err != nil { pageId = 0 }
 	pageId = int(math.Max(0, float64(pageId)))
 
 	minprice, err := strconv.Atoi(c.DefaultQuery("minprice"  , "0"))
-	if err != nil{
-		minprice = 0
-	}
+	if err != nil { minprice = 0 }
 	minprice = int(math.Max(0, float64(minprice)))
 
 	maxprice, err := strconv.Atoi(c.DefaultQuery("maxprice"  , "0"))
-	if err != nil{
-		maxprice = 0
-	}
+	if err != nil { maxprice = 0 }
 	maxprice = int(math.Max(0, float64(maxprice)))
 
 	// get connection and collection
 
 	var mc *mongo.Client = db.GetClient()
-	coll := mc.Database("buenavida").Collection("products")
+	coll := mc.Database("buenavida").Collection("products-search")
+	projection := bson.D{{"ngram", 0}, {"score", bson.D{{"$meta", "textScore"}} }}
 
-	opts := options.Find().SetSort(bson.D{{"_id", 1}}) // sort by id
+	opts := options.Find()
 	opts = opts.SetSkip(int64(12 * pageId)) // skip previous items
-	opts = opts.SetLimit(12) // get only 12
+	opts = opts.SetLimit(12)                // get only 12 items
+	opts = opts.SetProjection(projection)
 
-	// sort by price
+	// apply filters
+
 	filter := bson.D{
 		{"price", bson.D{{ "$gte", minprice }}},
 	}
 
 	if (maxprice != 0){
-		filter = bson.D{
-			{"price", bson.D{{ "$gte", minprice }}},
-			{"price", bson.D{{ "$lte", maxprice }}}}
+		filter = append(filter, bson.E{ "price", bson.D{{ "$lte", maxprice }}})
 	}
+
+	if (searchTerm != ""){
+		opts   = opts.SetSort(bson.D{{"score", bson.D{{ "$meta", "textScore" }} }}) // sort by score
+		filter = append(filter, bson.E{ "$text", bson.D{{ "$search", db.CreateNgram(searchTerm, 3) }} })
+	} else {
+		opts = opts.SetSort(bson.D{{"_id", 1}}) // sort by id
+	}
+
+	//fmt.Println(filter)
 
 	// query
 	cursor, err := coll.Find(context.TODO(), filter, opts)
 	if err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 		gin.H{"message": "Could not execute query"})
 		return
 	}
 
-	// Get a list of all returned documents and print them out.
+	// get Product array
 	var products []db.Product
 	if err = cursor.All(context.TODO(), &products); err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 		gin.H{"message": "Internal server error"})
 		return

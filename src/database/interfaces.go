@@ -12,6 +12,7 @@ type Product struct {
 	Discount		int	               `json:"discount"     bson:"discount"`
 	PricePerUnit	string             `json:"priceperunit" bson:"priceperunit"`
 	Description		string             `json:"description"  bson:"description"`
+	Score           float64            `json:"score"        bson:"score"`
 }
 
 type User struct {

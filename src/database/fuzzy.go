@@ -5,54 +5,56 @@ import (
 	"log"
 	"strings"
 	"context"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	//"go.mongodb.org/mongo-driver/bson/primitive"
+	utf8string "golang.org/x/exp/utf8string"
 )
 
+// based on 
 // https://medium.com/xeneta/fuzzy-search-with-mongodb-and-python-57103928ee5d
+// converts string into ngrams
 
-func MakeNgram(phrase string, min_size int) string{
+func CreateNgram (rawphrase string, min_size int) string{
+
 	ngrams_map := make(map[string]bool)
-	var ngrams []string
+	var ngrams string
 
-	words := strings.Split(phrase, " ")
-	
-	for _, word := range words {
+	// generate for each word
 
-		length := len(word)
+	words := strings.Split(rawphrase, " ")
+	for _, rawWord := range words {
+
+		word   := utf8string.NewString(rawWord)
+		length := word.RuneCount()
 
 		for i := 0; i <= length - min_size; i++{
 			for j := min_size; j <= length - i; j++{
-				
-				// fmt.Printf("%s\n", word[i:i + j])
-				ngrams_map[ word[i:i + j] ] = false
+				ngrams_map[ word.Slice(i, i + j) ] = false
 			}
 		}
 	}
 	
 	for key, _ := range ngrams_map {
-		ngrams = append(ngrams, key)
+		ngrams += " " + key
     }
 	
-	fmt.Printf("%s\n", ngrams)
-	//return ngrams
-	return strings.Join(ngrams," ")
+	//fmt.Printf("%s\n", ngrams)
+	return ngrams
 }
 
-func IndexNgrams(product Product){
+// save an Ngram for a single product
 
-	// save an ngram for every item in products-search
+func SaveProductNgram(product Product){
 
 	var mc *mongo.Client = GetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
-
 	
-	//update := bson.D{{"$inc", bson.D{{"price", 100}}}}
+	// create ngram field
 	filter := bson.D{{"_id", product.Id}}
-	update := bson.D{{"$set", bson.D{{"ngrams", MakeNgram(product.Title, 3)}}}}
+	update := bson.D{{"$set", bson.D{{"ngram", CreateNgram(product.Title, 3)}}}}
 
 	result, err := coll.UpdateMany(context.TODO(), filter, update)
 	if err != nil {
@@ -65,20 +67,21 @@ func IndexNgrams(product Product){
 	}
 }
 
-func UpdateAllNgram(){
+// save an Ngram for every product in the collection
+
+func PopulateNgrams(){
 
 	var mc *mongo.Client = GetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
-	opts := options.Find().SetSort(bson.D{{"_id", 1}}) // sort by id
 	
-	// query
-	cursor, err := coll.Find(context.TODO(), bson.D{{}}, opts)
+	// query all
+	cursor, err := coll.Find(context.TODO(), bson.D{{}}, options.Find())
 	if err != nil {
 		log.Fatal("Could not execute query")
 		return
 	}
 
-	// Get a list of all returned documents and print them out.
+	// get array
 	var products []Product
 	if err = cursor.All(context.TODO(), &products); err != nil {
 		log.Fatal("Could not execute query")
@@ -86,7 +89,32 @@ func UpdateAllNgram(){
 	}
 
 	for _, product := range products {
-		//fmt.Println(product)
-		IndexNgrams(product)
+		SaveProductNgram(product)
 	}
+}
+
+// Create index for Ngram field
+
+func CreateIndexNgram(){
+	var mc *mongo.Client = GetClient()
+	coll := mc.Database("buenavida").Collection("products-search")
+	indexView := coll.Indexes()
+
+	models := []mongo.IndexModel{
+		{
+			Keys:    bson.D{{"ngram", "text"}},
+			Options: options.Index().SetName("NgramIndex"),
+		},
+	}
+
+	// MaxTime limit the amount of time
+	// the operation can run on the server
+
+	opts := options.CreateIndexes().SetMaxTime(60 * time.Second)
+	names, err := indexView.CreateMany(context.TODO(), models, opts)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Created indexes %v\n", names)
 }
