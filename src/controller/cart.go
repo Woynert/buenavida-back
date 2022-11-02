@@ -31,7 +31,7 @@ func Payment(c *gin.Context) {
 		return
 	}
 	userId := userIdAny.(string)
-	fmt.Println(userId)
+	//fmt.Println(userId)
 
 	// get products from body
 
@@ -43,7 +43,7 @@ func Payment(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(items)
+	//fmt.Println(items)
 
 	// get discount and price for every item
 
@@ -71,7 +71,7 @@ func Payment(c *gin.Context) {
 		item.Discount   = product.Discount
 		item.PriceBase  = product.Price
 
-		fmt.Println(item)
+		//fmt.Println(item)
 
 	}
 
@@ -90,7 +90,7 @@ func Payment(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(saleId)
+	//fmt.Println(saleId)
 
 	// add every item to the sale payment
 

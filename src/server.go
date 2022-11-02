@@ -40,6 +40,12 @@ func main() {
 	router.DELETE("/session/logout" , CheckAccessToken(), controller.Logout)
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
 
+	//favorite
+	router.POST   ("/favorite/add", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
+    router.DELETE("/favorite/remove", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
+
+    // user
+
 	// cart
 	router.POST("/payment", CheckMongoConnection(),  CheckPostgresConnection(), CheckAccessToken(), controller.Payment)
 
