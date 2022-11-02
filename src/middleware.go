@@ -25,7 +25,7 @@ func CheckAccessToken() gin.HandlerFunc {
 		}
 
 		// validate
-		err, _ = token.Validate(accessToken)
+		err, claims := token.Validate(accessToken)
 
 		if err != nil{
 			fmt.Println(err)
@@ -33,6 +33,8 @@ func CheckAccessToken() gin.HandlerFunc {
 				gin.H{"message": "Invalid access token"})
 			return
 		}
+
+		c.Set("userid", claims.UserID)
 	}
 }
 
@@ -60,15 +62,30 @@ func CheckRefreshToken() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("claims", claims)
+		c.Set("userid", claims.UserID)
 	}
 }
 
-// ensure there is a connection
+// ensure there is a mongo connection
 func CheckMongoConnection() gin.HandlerFunc {
 	return func(c *gin.Context){
 
-		err := db.CheckConnection()
+		err := db.MongoCheckConnection()
+		if (err != nil){
+			fmt.Println(err)
+			c.AbortWithStatusJSON(http.StatusInternalServerError,
+			gin.H{"message": "Internal server error"})
+			return
+		}
+
+	}
+}
+
+// ensure there is a postgres connection
+func CheckPostgresConnection() gin.HandlerFunc {
+	return func(c *gin.Context){
+
+		err := db.PgCheckConnection()
 		if (err != nil){
 			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError,

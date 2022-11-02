@@ -37,7 +37,7 @@ func StoreFilterItems (c *gin.Context) {
 
 	// get connection and collection
 
-	var mc *mongo.Client = db.GetClient()
+	var mc *mongo.Client = db.MongoGetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
 	projection := bson.D{{"ngram", 0}, {"score", bson.D{{"$meta", "textScore"}} }}
 

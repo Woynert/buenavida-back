@@ -35,12 +35,12 @@ CREATE PROCEDURE sales_add_item (
 	IN ar_id_product CHAR(36),
 	IN ar_quantity INT,
 	IN ar_discount INT,
-	IN ar_price_base BIGINT
+	IN ar_price_base NUMERIC(8, 4)
 )
 LANGUAGE PLPGSQL    
 AS $$
 DECLARE
-	p_total FLOAT8;
+	p_total NUMERIC(8, 4);
 BEGIN
 
 	p_total := ar_price_base * (1.0 - ar_discount/100.0) * ar_quantity;
@@ -78,7 +78,7 @@ CREATE PROCEDURE sales_update (
 LANGUAGE PLPGSQL    
 AS $$
 DECLARE
-	p_subtotal FLOAT8;
+	p_subtotal NUMERIC(8, 4);
 BEGIN
 
 	-- get subtotal

@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS sales
 	id_client   CHAR(36) NOT NULL, -- uuid lenght in mongodb
 
 	iva         INT    NOT NULL DEFAULT 5,
-	subtotal    FLOAT8 NOT NULL DEFAULT 0,
-	total       FLOAT8 NOT NULL DEFAULT 0,
+	subtotal    NUMERIC(8, 4) NOT NULL DEFAULT 0,
+	total       NUMERIC(8, 4) NOT NULL DEFAULT 0,
 	created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS sales_items
 
 	quantity    INT    NOT NULL,
 	discount    INT    NOT NULL DEFAULT 0,
-	price_base  BIGINT NOT NULL,
-	price_final FLOAT8 NOT NULL,
+	price_base  NUMERIC(8, 4) NOT NULL,
+	price_final NUMERIC(8, 4) NOT NULL,
 
 	FOREIGN KEY (id_sale) REFERENCES sales(id)
 );

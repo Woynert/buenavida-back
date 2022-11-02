@@ -4,18 +4,32 @@ import (
 	controller "woynert/buenavida-api/controller"
 	db "woynert/buenavida-api/database"
 	"log"
+	"fmt"
 
     "github.com/gin-gonic/gin"
+	flag "github.com/spf13/pflag"
 )
 
 func main() {
 
-	// mongodb search index
-	if err := db.CheckConnection(); err != nil {
-		log.Fatal(err)
+	// flag
+
+	var flagCalindex = flag.StringP("calindex", "i", "unset", "Calculate index")
+	flag.Lookup("calindex").NoOptDefVal = "set"
+	flag.Parse()
+
+	if *flagCalindex != "unset" {
+
+		// mongodb search index
+		if err := db.MongoCheckConnection(); err != nil {
+			log.Fatal(err)
+		}
+		db.PopulateNgrams()
+		db.CreateIndexNgram()
+
+		fmt.Println("Finish creating index")
+		return
 	}
-	db.PopulateNgrams()
-	db.CreateIndexNgram()
 
 	// router
 	router := gin.Default();
@@ -27,7 +41,7 @@ func main() {
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
 
 	// cart
-	//router.GET("/cart", CheckMongoConnection(&mongoClient), CheckAccessToken(), controller.CartGetItems)
+	router.POST("/payment", CheckMongoConnection(),  CheckPostgresConnection(), CheckAccessToken(), controller.Payment)
 
 	// favorite
 

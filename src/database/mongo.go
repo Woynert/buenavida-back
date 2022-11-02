@@ -12,13 +12,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-var mongoClient mongo.Client;
+var mongoClient mongo.Client
 
-func GetClient () *mongo.Client {
+func MongoGetClient () *mongo.Client {
 	return &mongoClient
 }
 
-func StartConnection () error {
+func MongoStartConnection () error {
 
 	var err error
 
@@ -44,29 +44,29 @@ func StartConnection () error {
 	return nil
 }
 
-func CloseConnection () error {
+func MongoCloseConnection () error {
 	if err := mongoClient.Disconnect(context.TODO()); err != nil {
 		return errors.New("Could not disconnect")
 	}
 	return nil
 }
 
-func CheckConnection () error {
+func MongoCheckConnection () error {
 	
-	var mc *mongo.Client = GetClient()
+	var mc *mongo.Client = MongoGetClient()
 
 	// check connection
 	if err := mc.Ping(context.TODO(), readpref.Primary()); err != nil {
 
 		// disconnect
-		err = CloseConnection()
+		err = MongoCloseConnection()
 		if (err != nil){
 			return err
 		}
 
 		// reconnect
 		var err error
-		err = StartConnection()
+		err = MongoStartConnection()
 
 		if (err != nil){
 			return err
@@ -77,6 +77,7 @@ func CheckConnection () error {
 		// The Client.Ping method can be used to verify
 		// that the connection was created successfully.
 
+		mc = MongoGetClient()
 		if err = mc.Ping(context.TODO(), readpref.Primary()); err != nil {
 			return err
 		}
