@@ -4,10 +4,10 @@ import (
 	token "woynert/buenavida-api/token"
 	db "woynert/buenavida-api/database"
 
+	"fmt"
 	"context"
     "net/http"
 	"net/mail"
-	"fmt"
 	"unicode"
     "github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -193,7 +193,39 @@ func Login(c *gin.Context) {
 
 // get new access token from refresh token
 func Refresh (c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, "Change me")
+
+	// get claims
+
+	claimsAny, exists := c.Get("claims")
+
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Invalid token"})
+		return
+	}
+
+	var claims *token.TokenClaims
+	claims = claimsAny.(*token.TokenClaims)
+	fmt.Println(claims)
+	fmt.Println(claims.EXP)
+
+	// generate tokens
+
+	var tokeninfo token.TokenInfo = token.TokenInfo{
+		UserID: claims.UserID,
+	}
+
+	accessToken, refreshToken, err := token.Create(tokeninfo)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Could not generate token"})
+		return
+	}
+
+	c.SetCookie("refreshToken", refreshToken, 10, "/session/refresh", HOST, false, true)
+	c.SetCookie("accessToken", accessToken, 10, "/", HOST, false, true)
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully refreshed tokens"})
+
 }
 
 func Logout (c *gin.Context) {
@@ -201,7 +233,7 @@ func Logout (c *gin.Context) {
 	// delete tokens (cookies)
 	c.SetCookie("accessToken", "", -1, "/", HOST, false, true)
 	c.SetCookie("refreshToken", "", -1, "/session/refresh", HOST, false, true)
-	c.IndentedJSON(http.StatusOK, "Succesfully logout")
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Succesfully logged out"})
 }
 
 func validPassword(s string) error {

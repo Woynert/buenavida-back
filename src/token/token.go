@@ -15,7 +15,7 @@ type TokenInfo struct {
 	UserID string `json:"userid"`
 }
 
-type tokenClaims struct {
+type TokenClaims struct {
 	UserID string `json:"userid"`
 	NBF    time.Time `json:"nbf"`
 	EXP    time.Time `json:"exp"`
@@ -37,7 +37,7 @@ func Create(info TokenInfo) (string, string, error) {
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userid": info.UserID,
 		"nbf": time.Now(),
-		"exp": time.Now().AddDate(0, 0, -1),
+		"exp": time.Now().AddDate(0, 0, 1),
 	})
 
 	// sign with secret
@@ -58,11 +58,14 @@ func Create(info TokenInfo) (string, string, error) {
 }
 
 // verify token signature and expiration date
-// returns true | false if valid | invalid
+// returns nil if valid, err otherwise
 
-func Validate(tokenString string) bool {
+func Validate(tokenString string) (error, *TokenClaims) {
 
-	token, err := jwt.ParseWithClaims(tokenString, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(
+		tokenString, &TokenClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+
 		// validate algorithm
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -72,16 +75,21 @@ func Validate(tokenString string) bool {
 		return HMACSECRET, nil
 	})
 
-	if claims, ok := token.Claims.(*tokenClaims); ok && token.Valid {
+	if err != nil {
+		fmt.Println(err)
+		return err, nil
+	}
+
+	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
 		fmt.Println(claims.UserID)
+		fmt.Println(claims.NBF)
+		fmt.Println(claims.EXP)
 		fmt.Println("Expired?", !time.Now().Before(claims.EXP))
 
 		if (time.Now().Before(claims.EXP)){
-			return true
+			return nil, claims
 		}
-	} else {
-		fmt.Println("err", err)
 	}
 
-	return false
+	return errors.New("Could not create refresh token"), nil
 }

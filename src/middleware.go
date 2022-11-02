@@ -16,19 +16,23 @@ func CheckAccessToken() gin.HandlerFunc {
 		var accessToken string
 		accessToken, err := c.Cookie("accessToken")
 
-		// access token cookie not found
+		// token cookie not found
 		if err != nil{
+			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 				gin.H{"message": "Access token not provided"})
+			return
 		}
 
-		if token.Validate(accessToken){
-			c.Next()
-		} else { 
+		// validate
+		err, _ = token.Validate(accessToken)
+
+		if err != nil{
+			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 				gin.H{"message": "Invalid access token"})
+			return
 		}
-
 	}
 }
 
@@ -40,17 +44,23 @@ func CheckRefreshToken() gin.HandlerFunc {
 
 		// refresh token cookie not found
 		if err != nil{
+			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 				gin.H{"message": "Refresh token not provided"})
+			return
 		}
 
-		if token.Validate(refreshToken){
-			c.Next()
-		} else { 
+		// validate
+		err, claims := token.Validate(refreshToken)
+
+		if err != nil{
+			fmt.Println(err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized,
 				gin.H{"message": "Invalid refresh token"})
+			return
 		}
 
+		c.Set("claims", claims)
 	}
 }
 

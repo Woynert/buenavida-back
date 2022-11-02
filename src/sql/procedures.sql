@@ -1,19 +1,20 @@
 
 -- drop
 
-DROP PROCEDURE IF EXISTS sales_new;
+DROP FUNCTION IF EXISTS sales_new;
 DROP PROCEDURE IF EXISTS sales_add_item;
 DROP PROCEDURE IF EXISTS sales_update;
 
-
 -- create sale
 
-CREATE PROCEDURE sales_new (
-	IN  in_id_client CHAR(36),
-	OUT out_id_sale  INT
+CREATE FUNCTION sales_new (
+	IN  in_id_client CHAR(36)
 )
+RETURNS INTEGER
 LANGUAGE PLPGSQL    
 AS $$
+DECLARE
+	p_id_new_sale INT;
 BEGIN
 
 	-- insert and return sale id
@@ -21,9 +22,10 @@ BEGIN
 	INSERT INTO sales ( id_client )
 	VALUES ( in_id_client )
 	RETURNING id
-	INTO out_id_sale;
+	INTO p_id_new_sale;
 
-    COMMIT;
+	RETURN p_id_new_sale;
+
 END;$$;
 
 -- add item to sale
