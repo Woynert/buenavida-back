@@ -98,7 +98,7 @@ func Payment(c *gin.Context) {
 
 		_, err := pg.Exec("CALL sales_add_item ($1, $2, $3, $4, $5)",
 			saleId, // sale id
-			item.Id.String(), // product id
+			item.Id.Hex(), // product id
 			item.Quantity, // quantity
 			item.Discount, // discount
 			item.PriceBase) // price

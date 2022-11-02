@@ -75,8 +75,10 @@ func Login(c *gin.Context) {
 	// generate tokens
 
 	var tokeninfo token.TokenInfo = token.TokenInfo{
-		UserID: "0001",
+		UserID: user.Id.Hex(),
 	}
+
+	fmt.Println(user.Id.Hex())
 
 	accessToken, refreshToken, err := token.Create(tokeninfo)
 	if err != nil {
