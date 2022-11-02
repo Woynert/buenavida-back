@@ -49,7 +49,7 @@ func CreateNgram (rawphrase string, min_size int) string{
 
 func SaveProductNgram(product Product){
 
-	var mc *mongo.Client = GetClient()
+	var mc *mongo.Client = MongoGetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
 	
 	// create ngram field
@@ -71,7 +71,7 @@ func SaveProductNgram(product Product){
 
 func PopulateNgrams(){
 
-	var mc *mongo.Client = GetClient()
+	var mc *mongo.Client = MongoGetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
 	
 	// query all
@@ -96,7 +96,7 @@ func PopulateNgrams(){
 // Create index for Ngram field
 
 func CreateIndexNgram(){
-	var mc *mongo.Client = GetClient()
+	var mc *mongo.Client = MongoGetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
 	indexView := coll.Indexes()
 

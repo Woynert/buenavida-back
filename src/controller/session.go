@@ -42,7 +42,7 @@ func Login(c *gin.Context) {
 
 	// find user with email
 
-	var mc *mongo.Client = db.GetClient()
+	var mc *mongo.Client = db.MongoGetClient()
 	var user db.User
 	coll := mc.Database("buenavida").Collection("users")
 
@@ -94,9 +94,9 @@ func Login(c *gin.Context) {
 // get new access token from refresh token
 func Refresh (c *gin.Context) {
 
-	// get claims
+	// get user id
 
-	claimsAny, exists := c.Get("claims")
+	userIdAny, exists := c.Get("userid")
 
 	if !exists {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
@@ -104,15 +104,12 @@ func Refresh (c *gin.Context) {
 		return
 	}
 
-	var claims *token.TokenClaims
-	claims = claimsAny.(*token.TokenClaims)
-	fmt.Println(claims)
-	fmt.Println(claims.EXP)
+	userId := userIdAny.(string)
 
 	// generate tokens
 
 	var tokeninfo token.TokenInfo = token.TokenInfo{
-		UserID: claims.UserID,
+		UserID: userId,
 	}
 
 	accessToken, refreshToken, err := token.Create(tokeninfo)
