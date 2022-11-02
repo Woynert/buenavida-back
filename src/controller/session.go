@@ -34,7 +34,8 @@ func Signin(c *gin.Context) {
 
 	// See more at https://github.com/gin-gonic/gin/blob/master/binding/binding.go#L48
 	if err := c.BindJSON(&form); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
 
@@ -59,44 +60,45 @@ func Signin(c *gin.Context) {
 	}
 
 	if form.Firstname == "" {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Name cannot be empty"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Name cannot be empty"})
 		return
 	}
 
 	if form.Lastname == "" {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Lastname cannot be empty"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Lastname cannot be empty"})
 		return
 	}
 
 	_, err = mail.ParseAddress(form.Email)
 
 	if form.Email == "" {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Email cannot be empty"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Email cannot be empty"})
 		return
 	} else if err != nil{
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Email is invalid"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Email is invalid"})
         return
 	}
 
 	if form.Password == "" {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Password cannot be empty"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Password cannot be empty"})
 		return
 	}
 
 	if len(form.Password) >= 8{
 		message := validPassword(form.Password)
 		if message != nil{
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": message.Error()})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": message.Error()})
             return
 		}
 	}else{
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Password is too short"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Password is too short"})
         return
 	}
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(form.Password), 8)
 
 	if err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError,gin.H{"message": "Internal server error"})
 		return
 	}
@@ -112,6 +114,7 @@ func Signin(c *gin.Context) {
 	_, err = coll.InsertOne(context.TODO(),data)
 
 	if err != nil {
+		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError,gin.H{"message": "Internal server error"})
         return
 	}
