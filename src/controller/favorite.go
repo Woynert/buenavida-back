@@ -111,9 +111,102 @@ func AddFavorites(c *gin.Context){
 		gin.H{"message": "Internal server error"})
 	}
 
-	c.IndentedJSON(http.StatusOK,gin.H{"message": "Add Favorite successfully"})
+	c.IndentedJSON(http.StatusOK,gin.H{"message": "Add Item to Favorite successfully"})
 }
 
 func RemoveFavorites(c *gin.Context){
+	var err error
 
+	userIdAny, exists := c.Get("userid")
+
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Invalid token"})
+		return
+	}
+	
+	objID, err := primitive.ObjectIDFromHex(userIdAny.(string))
+
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Internal server error"})
+		return
+	}
+	
+	var mc *mongo.Client = db.MongoGetClient()
+	var user db.User
+	coll := mc.Database("buenavida").Collection("users")
+
+	err = coll.FindOne(
+		context.TODO(),
+		bson.D{{"_id", objID}},
+	).Decode(&user)
+
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Internal server error"})
+		return
+	}
+
+	var products Favorite
+
+	if err := c.BindJSON(&products); err != nil {
+		fmt.Println(err)
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		return
+	}
+
+	var product db.Product
+	
+	coll = mc.Database("buenavida").Collection("products-search")
+
+	err = coll.FindOne(
+		context.TODO(),
+		bson.D{{"_id", products.Id}},
+	).Decode(&product)
+
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Internal server error"})
+		return
+	}
+
+	var arrayFavorite []primitive.ObjectID = user.Favorites
+
+	var result bool = false
+	var index int;
+    for i, x := range arrayFavorite {
+        if x == product.Id {
+            result = true
+			index = i;
+            break
+        }
+    }
+
+	if !result {
+        c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Product not exists in favorites"})
+		return
+    }
+
+	arrayFavorite = RemoveIndex(arrayFavorite, index)
+	
+	coll = mc.Database("buenavida").Collection("users")
+	_, err = coll.UpdateOne(context.TODO(), 
+	bson.D{{"_id", objID}}, 
+	bson.D{{"$set", bson.D{{"favorites", arrayFavorite}}}})
+
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Internal server error"})
+	}
+
+	c.IndentedJSON(http.StatusOK,gin.H{"message": "Remove Item from Favorite successfully"})
+}
+
+func RemoveIndex(s []primitive.ObjectID, index int) []primitive.ObjectID {
+	return append(s[:index], s[index+1:]...)
 }
