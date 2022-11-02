@@ -109,9 +109,14 @@ func Signin(c *gin.Context) {
 		"favorites":[]string{},
 	}
 
-	result, err := coll.InsertOne(context.TODO(),data)
+	_, err = coll.InsertOne(context.TODO(),data)
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": result.InsertedID})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError,gin.H{"message": "Internal server error"})
+        return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "User created successfully"})
 	
 }
 
