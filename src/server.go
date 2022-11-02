@@ -35,7 +35,7 @@ func main() {
 	router := gin.Default();
 
 	// session
-	router.GET   ("/session/signin" , controller.Signin)
+	router.POST   ("/session/signin" , CheckMongoConnection(), controller.Signin)
 	router.POST  ("/session/login"  , CheckMongoConnection(), controller.Login)
 	router.DELETE("/session/logout" , CheckAccessToken(), controller.Logout)
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
