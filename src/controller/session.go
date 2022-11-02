@@ -41,7 +41,7 @@ func Signin(c *gin.Context) {
 
 	// find user with email
 
-	var mc *mongo.Client = db.GetClient()
+	var mc *mongo.Client = db.MongoGetClient()
 	var user db.User
 	coll := mc.Database("buenavida").Collection("users")
 
