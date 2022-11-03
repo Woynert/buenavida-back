@@ -134,7 +134,7 @@ func RemoveFavorites(c *gin.Context){
 		gin.H{"message": "Invalid token"})
 		return
 	}
-	
+
 	objID, err := primitive.ObjectIDFromHex(userIdAny.(string))
 
 	if err != nil {
@@ -145,7 +145,7 @@ func RemoveFavorites(c *gin.Context){
 	}
 
 	// get user if exists
-	
+
 	var mc *mongo.Client = db.MongoGetClient()
 	var user db.User
 	coll := mc.Database("buenavida").Collection("users")
@@ -175,7 +175,7 @@ func RemoveFavorites(c *gin.Context){
 	// check product exists
 
 	var product db.Product
-	
+
 	coll = mc.Database("buenavida").Collection("products")
 
 	err = coll.FindOne(
@@ -190,7 +190,7 @@ func RemoveFavorites(c *gin.Context){
 		return
 	}
 
-	// no exists product id in favorites 
+	// no exists product id in favorites
 
 	var arrayFavorite []primitive.ObjectID = user.Favorites
 
@@ -211,22 +211,23 @@ func RemoveFavorites(c *gin.Context){
 
 	// finally remove from favorites
 
-	arrayFavorite = RemoveIndex(arrayFavorite, index)
-	
+	arrayFavorite = removeIndex(arrayFavorite, index)
+
 	coll = mc.Database("buenavida").Collection("users")
-	_, err = coll.UpdateOne(context.TODO(), 
-	bson.D{{"_id", objID}}, 
+	_, err = coll.UpdateOne(context.TODO(),
+	bson.D{{"_id", objID}},
 	bson.D{{"$set", bson.D{{"favorites", arrayFavorite}}}})
 
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 		gin.H{"message": "Internal server error"})
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK,gin.H{"message": "Remove Item from Favorite successfully"})
 }
 
-func RemoveIndex(s []primitive.ObjectID, index int) []primitive.ObjectID {
+func removeIndex(s []primitive.ObjectID, index int) []primitive.ObjectID {
 	return append(s[:index], s[index+1:]...)
 }
