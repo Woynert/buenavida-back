@@ -13,6 +13,7 @@ type Product struct {
 	PricePerUnit	string             `json:"priceperunit" bson:"priceperunit"`
 	Description		string             `json:"description"  bson:"description"`
 	Score           float64            `json:"score"        bson:"score"`
+	ImageUrl        string             `json:"imageurl"     bson:"imageurl"`
 }
 
 type User struct {

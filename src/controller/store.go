@@ -3,12 +3,14 @@ package controller
 import (
 	db "woynert/buenavida-api/database"
 
+	"os"
 	"fmt"
 	"context"
 	"net/http"
 	"strconv"
 	"math"
 
+	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -84,6 +86,21 @@ func StoreFilterItems (c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError,
 		gin.H{"message": "Internal server error"})
 		return
+	}
+
+	// prepend host to image url
+
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("No .env file found")
+	} else {
+		hostIS := os.Getenv("HOST_PRODUCT_IMAGES")
+		if hostIS == "" {
+			fmt.Println("HOST_PRODUCT_IMAGES not set")
+		} else {
+			for i, _ := range products {
+				products[i].ImageUrl = fmt.Sprintf("%s/%s", hostIS, products[i].ImageUrl)
+			}
+		}
 	}
 
 	fmt.Printf(
