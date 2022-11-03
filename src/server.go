@@ -6,7 +6,8 @@ import (
 	"log"
 	"fmt"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	flag "github.com/spf13/pflag"
 )
 
@@ -33,6 +34,7 @@ func main() {
 
 	// router
 	router := gin.Default();
+	router.Use(cors.Default())
 
 	// session
 	router.POST   ("/session/signin" , CheckMongoConnection(), controller.Signin)
