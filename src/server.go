@@ -6,7 +6,7 @@ import (
 	"log"
 	"fmt"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	flag "github.com/spf13/pflag"
 )
 
@@ -35,16 +35,16 @@ func main() {
 	router := gin.Default();
 
 	// session
-	router.POST   ("/session/signin" , CheckMongoConnection(), controller.Signin)
+	router.POST  ("/session/signin" , CheckMongoConnection(), controller.Signin)
 	router.POST  ("/session/login"  , CheckMongoConnection(), controller.Login)
 	router.DELETE("/session/logout" , CheckAccessToken(), controller.Logout)
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
 
 	//favorite
-	router.POST   ("/favorite/add", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
-    router.DELETE("/favorite/remove", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
+	router.POST  ("/favorite/add", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
+	router.DELETE("/favorite/remove", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
 
-    // user
+	// user
 
 	// cart
 	router.POST("/payment", CheckMongoConnection(),  CheckPostgresConnection(), CheckAccessToken(), controller.Payment)

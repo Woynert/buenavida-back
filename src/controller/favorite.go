@@ -5,9 +5,9 @@ import (
 
 	"fmt"
 	"context"
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,6 +25,8 @@ type user struct {
 func AddFavorites(c *gin.Context){
 	var err error
 
+	// get userid
+
 	userIdAny, exists := c.Get("userid")
 
 	if !exists {
@@ -32,7 +34,7 @@ func AddFavorites(c *gin.Context){
 		gin.H{"message": "Invalid token"})
 		return
 	}
-	
+
 	objID, err := primitive.ObjectIDFromHex(userIdAny.(string))
 
 	if err != nil {
@@ -41,7 +43,9 @@ func AddFavorites(c *gin.Context){
 		gin.H{"message": "Internal server error"})
 		return
 	}
-	
+
+	// get user favorites if exists
+
 	var mc *mongo.Client = db.MongoGetClient()
 	var user db.User
 	coll := mc.Database("buenavida").Collection("users")
@@ -58,6 +62,8 @@ func AddFavorites(c *gin.Context){
 		return
 	}
 
+	// get product id form body
+
 	var products Favorite
 
 	if err := c.BindJSON(&products); err != nil {
@@ -66,8 +72,10 @@ func AddFavorites(c *gin.Context){
 		return
 	}
 
+	// check product exists
+
 	var product db.Product
-	
+
 	coll = mc.Database("buenavida").Collection("products-search")
 
 	err = coll.FindOne(
@@ -82,24 +90,27 @@ func AddFavorites(c *gin.Context){
 		return
 	}
 
+	// no repeated product ids
+
 	var arrayFavorite []primitive.ObjectID = user.Favorites
 
 	var result bool = false
-    for _, x := range arrayFavorite {
-        if x == product.Id {
-            result = true
-            break
-        }
-    }
+	for _, x := range arrayFavorite {
+		if x == product.Id {
+			result = true
+			break
+		}
+	}
 
 	if result {
-        c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Product already exists in favorites"})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Product already exists in favorites"})
 		return
-    }
+	}
+
+	// finally add
 
 	arrayFavorite = append(arrayFavorite,product.Id)
-	
-	
+
 	coll = mc.Database("buenavida").Collection("users")
 	_, err = coll.UpdateOne(context.TODO(), 
 	bson.D{{"_id", objID}}, 
