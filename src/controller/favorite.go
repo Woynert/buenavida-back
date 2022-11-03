@@ -72,7 +72,7 @@ func AddFavorites(c *gin.Context){
 
 	var product db.Product
 
-	coll = mc.Database("buenavida").Collection("products-search")
+	coll = mc.Database("buenavida").Collection("products")
 
 	err = coll.FindOne(
 		context.TODO(),
@@ -176,11 +176,11 @@ func RemoveFavorites(c *gin.Context){
 
 	var product db.Product
 	
-	coll = mc.Database("buenavida").Collection("products-search")
+	coll = mc.Database("buenavida").Collection("products")
 
 	err = coll.FindOne(
 		context.TODO(),
-		bson.D{{"_id", products.Id}},
+		bson.D{{"_id", newFavoriteProductId}},
 	).Decode(&product)
 
 	if err != nil {
