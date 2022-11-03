@@ -5,6 +5,7 @@ import (
 	db "woynert/buenavida-api/database"
 	"log"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
@@ -35,6 +36,9 @@ func main() {
 	// router
 	router := gin.Default();
 	router.Use(cors.Default())
+
+	// image server
+	router.StaticFS("/assets", http.Dir("../data/assets"))
 
 	// session
 	router.POST  ("/session/signin" , CheckMongoConnection(), controller.Signin)

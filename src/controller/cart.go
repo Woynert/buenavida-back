@@ -45,7 +45,7 @@ func Payment(c *gin.Context) {
 	// get discount and price for every item
 
 	mc   := db.MongoGetClient()
-	coll := mc.Database("buenavida").Collection("products-search")
+	coll := mc.Database("buenavida").Collection("products")
 
 	for index, _ := range items {
 
