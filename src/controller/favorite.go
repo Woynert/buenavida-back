@@ -72,7 +72,7 @@ func AddFavorites(c *gin.Context){
 
 	var product db.Product
 
-	coll = mc.Database("buenavida").Collection("products-search")
+	coll = mc.Database("buenavida").Collection("products")
 
 	err = coll.FindOne(
 		context.TODO(),

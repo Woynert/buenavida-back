@@ -50,7 +50,7 @@ func CreateNgram (rawphrase string, min_size int) string{
 func SaveProductNgram(product Product){
 
 	var mc *mongo.Client = MongoGetClient()
-	coll := mc.Database("buenavida").Collection("products-search")
+	coll := mc.Database("buenavida").Collection("products")
 	
 	// create ngram field
 	filter := bson.D{{"_id", product.Id}}
@@ -72,7 +72,7 @@ func SaveProductNgram(product Product){
 func PopulateNgrams(){
 
 	var mc *mongo.Client = MongoGetClient()
-	coll := mc.Database("buenavida").Collection("products-search")
+	coll := mc.Database("buenavida").Collection("products")
 	
 	// query all
 	cursor, err := coll.Find(context.TODO(), bson.D{{}}, options.Find())
@@ -97,7 +97,7 @@ func PopulateNgrams(){
 
 func CreateIndexNgram(){
 	var mc *mongo.Client = MongoGetClient()
-	coll := mc.Database("buenavida").Collection("products-search")
+	coll := mc.Database("buenavida").Collection("products")
 	indexView := coll.Indexes()
 
 	models := []mongo.IndexModel{

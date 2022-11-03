@@ -38,7 +38,7 @@ func StoreFilterItems (c *gin.Context) {
 	// get connection and collection
 
 	var mc *mongo.Client = db.MongoGetClient()
-	coll := mc.Database("buenavida").Collection("products-search")
+	coll := mc.Database("buenavida").Collection("products")
 
 	opts := options.Find()
 	opts = opts.SetSkip(int64(12 * pageId)) // skip previous items
