@@ -13,10 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Favorite struct {
-	Id         primitive.ObjectID `json:"itemid"`
-}
-
 type user struct {
 	Favorites  string               `json:"favorites"`
 	Email     string               `json:"email"`
@@ -44,7 +40,7 @@ func AddFavorites(c *gin.Context){
 		return
 	}
 
-	// get user favorites if exists
+	// get user if exists
 
 	var mc *mongo.Client = db.MongoGetClient()
 	var user db.User
@@ -62,13 +58,13 @@ func AddFavorites(c *gin.Context){
 		return
 	}
 
-	// get product id form body
+	// get product id from Query
 
-	var products Favorite
+	var newFavoriteProductId primitive.ObjectID
 
-	if err := c.BindJSON(&products); err != nil {
+	if newFavoriteProductId, err = primitive.ObjectIDFromHex(c.DefaultQuery("itemid", "")); err != nil {
 		fmt.Println(err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Wrong ObjectID"})
 		return
 	}
 
@@ -80,13 +76,13 @@ func AddFavorites(c *gin.Context){
 
 	err = coll.FindOne(
 		context.TODO(),
-		bson.D{{"_id", products.Id}},
+		bson.D{{"_id", newFavoriteProductId}},
 	).Decode(&product)
 
 	if err != nil {
 		fmt.Println(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError,
-		gin.H{"message": "Internal server error"})
+		c.AbortWithStatusJSON(http.StatusBadRequest,
+		gin.H{"message": "Product not found"})
 		return
 	}
 
@@ -103,7 +99,8 @@ func AddFavorites(c *gin.Context){
 	}
 
 	if result {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Product already exists in favorites"})
+		c.AbortWithStatusJSON(http.StatusBadRequest,
+		gin.H{"message": "Product already exists in favorites"})
 		return
 	}
 

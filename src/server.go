@@ -41,8 +41,8 @@ func main() {
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
 
 	//favorite
-	router.POST  ("/favorite/add", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
-	router.DELETE("/favorite/remove", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
+	router.PUT   ("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
+	router.DELETE("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
 
 	// user
 
