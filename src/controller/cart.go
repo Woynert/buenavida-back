@@ -5,9 +5,9 @@ import (
 
 	"fmt"
 	"context"
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -31,7 +31,6 @@ func Payment(c *gin.Context) {
 		return
 	}
 	userId := userIdAny.(string)
-	fmt.Println(userId)
 
 	// get products from body
 
@@ -42,8 +41,6 @@ func Payment(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return
 	}
-
-	fmt.Println(items)
 
 	// get discount and price for every item
 
@@ -71,13 +68,11 @@ func Payment(c *gin.Context) {
 		item.Discount   = product.Discount
 		item.PriceBase  = product.Price
 
-		fmt.Println(item)
-
 	}
 
 	// create sale payment 
 	// get sale id
-	
+
 	pg := db.PgGetClient()
 
 	var saleId string
@@ -90,18 +85,16 @@ func Payment(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(saleId)
-
 	// add every item to the sale payment
 
 	for _, item := range items {
 
 		_, err := pg.Exec("CALL sales_add_item ($1, $2, $3, $4, $5)",
-			saleId, // sale id
-			item.Id.Hex(), // product id
-			item.Quantity, // quantity
-			item.Discount, // discount
-			item.PriceBase) // price
+		saleId, // sale id
+		item.Id.Hex(), // product id
+		item.Quantity, // quantity
+		item.Discount, // discount
+		item.PriceBase) // price
 
 		if err != nil {
 			fmt.Println("Error inserting data ", err)
@@ -110,7 +103,6 @@ func Payment(c *gin.Context) {
 			return 
 		}
 	}
-
 
 	c.IndentedJSON(http.StatusOK,
 	gin.H{"message": "Payment successful"})

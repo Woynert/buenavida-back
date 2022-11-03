@@ -37,10 +37,16 @@ func main() {
 	router.Use(cors.Default())
 
 	// session
-	router.POST   ("/session/signin" , CheckMongoConnection(), controller.Signin)
+	router.POST  ("/session/signin" , CheckMongoConnection(), controller.Signin)
 	router.POST  ("/session/login"  , CheckMongoConnection(), controller.Login)
 	router.DELETE("/session/logout" , CheckAccessToken(), controller.Logout)
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
+
+	//favorite
+	router.PUT   ("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)
+	router.DELETE("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
+
+	// user
 
 	// cart
 	router.POST("/payment", CheckMongoConnection(),  CheckPostgresConnection(), CheckAccessToken(), controller.Payment)
