@@ -39,12 +39,10 @@ func StoreFilterItems (c *gin.Context) {
 
 	var mc *mongo.Client = db.MongoGetClient()
 	coll := mc.Database("buenavida").Collection("products-search")
-	projection := bson.D{{"ngram", 0}, {"score", bson.D{{"$meta", "textScore"}} }}
 
 	opts := options.Find()
 	opts = opts.SetSkip(int64(12 * pageId)) // skip previous items
 	opts = opts.SetLimit(12)                // get only 12 items
-	opts = opts.SetProjection(projection)
 
 	// apply filters
 
@@ -56,14 +54,19 @@ func StoreFilterItems (c *gin.Context) {
 		filter = append(filter, bson.E{ "price", bson.D{{ "$lte", maxprice }}})
 	}
 
+	projection := bson.D{{"ngram", 0}} // don't return ngrams
+
 	if (searchTerm != ""){
-		opts   = opts.SetSort(bson.D{{"score", bson.D{{ "$meta", "textScore" }} }}) // sort by score
+		// sort by score
+		projection = append(projection, bson.E{ "score", bson.D{{"$meta", "textScore"}} })
+		opts   = opts.SetSort(bson.D{{"score", bson.D{{ "$meta", "textScore" }} }})
 		filter = append(filter, bson.E{ "$text", bson.D{{ "$search", db.CreateNgram(searchTerm, 3) }} })
 	} else {
 		opts = opts.SetSort(bson.D{{"_id", 1}}) // sort by id
 	}
+	opts = opts.SetProjection(projection)
 
-	//fmt.Println(filter)
+	// fmt.Println(filter)
 
 	// query
 	cursor, err := coll.Find(context.TODO(), filter, opts)
