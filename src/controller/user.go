@@ -55,32 +55,27 @@ func GetUserInformation(c *gin.Context) {
 		return
 	}
 
+	// get favorites info
+	// TODO: this can be optimized by using aggregation
+
+	hostIS := ""
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("No .env file found")
+	} else {
+		hostIS = os.Getenv("HOST_PRODUCT_IMAGES")
+		if hostIS == "" {
+			fmt.Println("HOST_PRODUCT_IMAGES not set. Continuing anyway")
+		}
+	}
+
 	var arrayProduct []db.Product
 
 	for _, x := range user.Favorites {
 
-		// check product exists
-
-		var product db.Product
-
-		coll = mc.Database("buenavida").Collection("products")
-
-		err = coll.FindOne(
-			context.TODO(),
-			bson.D{{"_id", x}},
-		).Decode(&product)
-
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatusJSON(http.StatusBadRequest,
-			gin.H{"message": "Product not found"})
-			return
-		}
-
 		// get product if exists
 
+		var product db.Product
 		coll := mc.Database("buenavida").Collection("products")
-
 		err = coll.FindOne(
 			context.TODO(),
 			bson.D{{"_id", x}},
@@ -93,18 +88,11 @@ func GetUserInformation(c *gin.Context) {
 			return
 		}
 
-		if err := godotenv.Load(); err != nil {
-			fmt.Println("No .env file found")
-		} else {
-			hostIS := os.Getenv("HOST_PRODUCT_IMAGES")
-			if hostIS == "" {
-				fmt.Println("HOST_PRODUCT_IMAGES not set")
-			} else {
-				product.ImageUrl = fmt.Sprintf("%s/%s", hostIS, product.ImageUrl)
-			}
+		if hostIS != "" {
+			product.ImageUrl = fmt.Sprintf("%s/%s", hostIS, product.ImageUrl)
 		}
 
-		arrayProduct = append(arrayProduct,product)
+		arrayProduct = append(arrayProduct, product)
 	}
 
 	dataUser := map[string]interface{}{
@@ -113,7 +101,6 @@ func GetUserInformation(c *gin.Context) {
 		"email":user.Email,
 		"favorites":arrayProduct,
 	}
-
 
 	c.IndentedJSON(http.StatusOK,dataUser)
 }
