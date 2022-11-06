@@ -17,6 +17,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+
+type FilterResponse struct {
+	TotalCount int64        `json:"totalcount" bson:"totalcount"`   
+	Products   []db.Product `json:"products"   bson:"products"`
+}
+
 func StoreFilterItems (c *gin.Context) {
 
 	// get url parameters
@@ -103,9 +109,21 @@ func StoreFilterItems (c *gin.Context) {
 		}
 	}
 
+	// get total count
+
+	//opts = options.Count().SetMaxTime(60 * time.Second)
+	count, err := coll.CountDocuments(context.TODO(), filter, options.Count())
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError,
+		gin.H{"message": "Internal server error"})
+		return
+	}
+	fmt.Printf("name Bob appears in %v documents", count)
+
 	fmt.Printf(
 	"\nFound %d products\nSearchterm \"%s\" PageId %d Minprice %d Maxprice %d\n",
 	len(products), searchTerm, pageId, minprice, maxprice)
 
-	c.IndentedJSON(http.StatusOK, products)
+	c.IndentedJSON(http.StatusOK, FilterResponse{ count, products })
 }
