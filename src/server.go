@@ -51,11 +51,10 @@ func main() {
 	router.DELETE("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.RemoveFavorites)
 
 	// user
+	router.GET("/user/info", CheckMongoConnection(), CheckAccessToken(), controller.GetUserInformation)
 
 	// cart
 	router.POST("/payment", CheckMongoConnection(),  CheckPostgresConnection(), CheckAccessToken(), controller.Payment)
-
-	// favorite
 
 	// store
 	router.GET ("/store", CheckMongoConnection(), controller.StoreFilterItems)
