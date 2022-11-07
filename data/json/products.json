@@ -25,7 +25,7 @@
 		"units": "60UDS.",
 		"price": 15.5,
 		"priceperunit": "Sale a: 0,26 €/ud.",
-		"discount": 0,
+		"discount": 10,
 		"description": "Parches de oro de 24 kt rejuvenecedores para contorno de ojos de Natura Siberica. Parches para ojos con efecto rejuvenecedor enriquecidos con oro de 24kt. Su acción descongestiona la piel, la suaviza y mejora su luminosidad. Estos parches con oro de 24kt son la opción perfecta para rejuvenecer la mirada en pocos minutos. Basados en activo postbiótico único y extractos fermentados de mora de los pantanos norteña y frambuesa silvestre, contienen dos activos únicos para combatir los signos de envejecimiento: el complejo de polipéptidos SYN-COLL® y oro de 24kt. Gracias a ellos, estimulan la síntesis de colágeno en las células de la piel y ayudan a suavizar las arrugas, mejorando la ",
 		"imageurl": "3.jpg"
 	},
@@ -95,7 +95,7 @@
 		"units": "1L",
 		"price": 14.99,
 		"priceperunit": "Sale a: 14,99 €/L",
-		"discount": 0,
+		"discount": 25,
 		"description": "El Aceite de Almendras dulces es básico para una hidratación y nutrición de la piel. Puedes utilizarlo en todas las partes de tu cuerpo preferiblemente después de la ducha con la piel húmeda, para ayudar a su absorción llegando a las capas profundas de la piel. Un aceite neutro apto para todo tipo de pieles y edades, utilizándose para toda la familia desde las edades más tempranas. Es ideal como base para formularlo con otros aceites, aceites esenciales y lociones.",
 		"imageurl": "10.jpg"
 	},
@@ -135,7 +135,7 @@
 		"units": "",
 		"price": 81.7,
 		"priceperunit": "Sale a: 817,00 €/L",
-		"discount": 0,
+		"discount": 15,
 		"description": "Aceite corporal empleado para moldear y realzar el busto dándole una apariencia de mayor volumen. Hidrata y nutre ayudando a prevenir las estrías de esta zona tan sensible. Utilízalo directamente con ligeros masajes circulares hasta su total absorción. Puedes utilizarlo de forma diaria, para mejores resultados te aconsejamos de dos a tres aplicaciones al día.",
 		"imageurl": "14.jpg"
 	},
@@ -235,7 +235,7 @@
 		"units": "15ML",
 		"price": 20.95,
 		"priceperunit": "Sale a: 20,95 €/ud.",
-		"discount": 0,
+		"discount": 50,
 		"description": "Aceite de semillas de cáñamo con CBD al 5%. Adecuado para el uso diario en personas con dolor crónico o de intensidad alta. El aceite de cáñamo con CBD de Terra Verda es orgánico, vegano y libre de crueldad animal. Su exclusivo método de extracción permite mantener todas las propiedades de la semilla de cáñamo sin trazos de tóxicos ni alcoholes. Puedes usarlo diariamente para aliviar las dolencias articulares o musculares por el dolor crónico, días estresantes o la actividad deportiva.",
 		"imageurl": "24.jpg"
 	},
