@@ -35,7 +35,12 @@ func main() {
 
 	// router
 	router := gin.Default();
-	router.Use(cors.Default())
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:4200"}
+	config.AllowCredentials = true
+
+	router.Use(cors.New(config))
 
 	// image server
 	router.StaticFS("/assets", http.Dir("../data/assets"))
@@ -45,6 +50,7 @@ func main() {
 	router.POST  ("/session/login"  , CheckMongoConnection(), controller.Login)
 	router.DELETE("/session/logout" , CheckAccessToken(), controller.Logout)
 	router.GET   ("/session/refresh", CheckRefreshToken(), controller.Refresh)
+	router.GET   ("/session/ping"   , CheckAccessToken(), controller.Ping)
 
 	//favorite
 	router.PUT   ("/favorite", CheckMongoConnection(), CheckAccessToken(), controller.AddFavorites)

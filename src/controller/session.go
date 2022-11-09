@@ -16,7 +16,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const HOST string = "localhost";
+const HOST string = "localhost:8070";
+const ACCESS_COOKIE_EXP = 60;
+const REFRESH_COOKIE_EXP = 60*60*24;
 
 // hash passwords with bcrypt
 // https://dev.to/nwby/how-to-hash-a-password-in-go-4jae
@@ -26,6 +28,10 @@ type SigninForm struct {
 	Lastname  string               `json:"lastname"`
 	Email     string               `json:"email"`
 	Password  string               `json:"password"`
+}
+
+func Ping(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Authorized"})
 }
 
 func Signin(c *gin.Context) {
@@ -187,8 +193,9 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("refreshToken", refreshToken, 10, "/session/refresh", HOST, false, true)
-	c.SetCookie("accessToken", accessToken, 10, "/", HOST, false, true)
+	c.SetSameSite(http.SameSiteStrictMode)
+	c.SetCookie("refreshToken", refreshToken, REFRESH_COOKIE_EXP, "/session/refresh", HOST, false, true)
+	c.SetCookie("accessToken", accessToken, ACCESS_COOKIE_EXP, "/", HOST, false, true)
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully logged in"})
 }
 
@@ -221,8 +228,9 @@ func Refresh (c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("refreshToken", refreshToken, 10, "/session/refresh", HOST, false, true)
-	c.SetCookie("accessToken", accessToken, 10, "/", HOST, false, true)
+	c.SetSameSite(http.SameSiteStrictMode)
+	c.SetCookie("refreshToken", refreshToken, REFRESH_COOKIE_EXP, "/session/refresh", HOST, false, true)
+	c.SetCookie("accessToken", accessToken, ACCESS_COOKIE_EXP, "/", HOST, false, true)
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Successfully refreshed tokens"})
 
 }
@@ -230,6 +238,7 @@ func Refresh (c *gin.Context) {
 func Logout (c *gin.Context) {
 
 	// delete tokens (cookies)
+	c.SetSameSite(http.SameSiteStrictMode)
 	c.SetCookie("accessToken", "", -1, "/", HOST, false, true)
 	c.SetCookie("refreshToken", "", -1, "/session/refresh", HOST, false, true)
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Succesfully logged out"})

@@ -62,6 +62,8 @@ func Create(info TokenInfo) (string, string, error) {
 
 func Validate(tokenString string) (error, *TokenClaims) {
 
+	fmt.Println(tokenString)
+
 	token, err := jwt.ParseWithClaims(
 		tokenString, &TokenClaims{},
 		func(token *jwt.Token) (interface{}, error) {
