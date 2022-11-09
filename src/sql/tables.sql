@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS sales
 	id          SERIAL PRIMARY KEY,
 	id_client   CHAR(36) NOT NULL, -- uuid lenght in mongodb
 
-	iva         INT    NOT NULL DEFAULT 5,
+	iva         INT    NOT NULL DEFAULT 19,
 	subtotal    NUMERIC(8, 4) NOT NULL DEFAULT 0,
 	total       NUMERIC(8, 4) NOT NULL DEFAULT 0,
 	created     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
